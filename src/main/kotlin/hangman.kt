@@ -9,13 +9,11 @@ import org.json.JSONObject
 
 fun main() {
     val mutableAlphaList = ("abcdefghijklmnopqrstuvwxyz").toMutableList()
-    val words = listOf("apple", "banana", "cherry", "date", "fig", "grape") // List of words to choose from
-    val randomWord = words.random() // Choose a random word from the list
     val guessedLetters = mutableSetOf<Char>() // Set to store guessed letters
     var attempts = 6 // Number of attempts allowed
 
     println("Welcome to Hangman!")
-    println("Guess the word by entering one letter at a time.")
+    println("Guess the famous quote by entering one letter at a time.")
     println("You have $attempts attempts.\n")
 
     println("Available letters: ${mutableAlphaList.joinToString()}")
@@ -23,9 +21,10 @@ fun main() {
     println("index: $index")
     mutableAlphaList.removeAt(index)
     println("Available letters minus 'z': ${mutableAlphaList}")
+
     val quoteString = getQuote(25)
     println(quoteString)
-
+    guessedLetters.add('a')
     println("\nQuote: ${getQuoteDisplay(quoteString, guessedLetters)}")
 }
 
