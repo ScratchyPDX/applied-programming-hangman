@@ -1,10 +1,11 @@
+package org.example
 
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import org.json.JSONObject
 
-import java.util.Scanner
-
-// fun main() {
-//   println("hello world!")
-// }
 
 fun main() {
     val mutableAlphaList = ("abcdefghijklmnopqrstuvwxyz").toMutableList()
@@ -17,9 +18,24 @@ fun main() {
     println("Guess the word by entering one letter at a time.")
     println("You have $attempts attempts.")
 
+
     println("Available letters: ${mutableAlphaList}")
     val index = mutableAlphaList.binarySearch('z')
     println("index: $index")
     mutableAlphaList.removeAt(index)
     println("Available letters minus 'z': ${mutableAlphaList}")
+
+    // println("Getting random quote")
+    // val quote = getRandomQuote(25)
+    // println("Random quote result: $quote")
+
+    val client = HttpClient.newHttpClient()
+    val request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.quotable.io/random?maxLength=25"))
+        .build()
+
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+    println(response.body())
+    val jsonObject = JSONObject(response.body())
+    println(jsonObject.getString("content"))
 }
