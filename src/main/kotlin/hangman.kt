@@ -16,26 +16,36 @@ fun main() {
 
     println("Welcome to Hangman!")
     println("Guess the word by entering one letter at a time.")
-    println("You have $attempts attempts.")
+    println("You have $attempts attempts.\n")
 
-
-    println("Available letters: ${mutableAlphaList}")
+    println("Available letters: ${mutableAlphaList.joinToString()}")
     val index = mutableAlphaList.binarySearch('z')
     println("index: $index")
     mutableAlphaList.removeAt(index)
     println("Available letters minus 'z': ${mutableAlphaList}")
+    val quoteString = getQuote(25)
+    println(quoteString)
 
-    // println("Getting random quote")
-    // val quote = getRandomQuote(25)
-    // println("Random quote result: $quote")
+    println("\nQuote: ${getQuoteDisplay(quoteString, guessedLetters)}")
+}
 
+fun getQuote(maxLength: Int): String {
     val client = HttpClient.newHttpClient()
     val request = HttpRequest.newBuilder()
-        .uri(URI.create("https://api.quotable.io/random?maxLength=25"))
+        .uri(URI.create("https://api.quotable.io/random?maxLength=$maxLength"))
         .build()
 
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-    println(response.body())
     val jsonObject = JSONObject(response.body())
-    println(jsonObject.getString("content"))
+    return jsonObject.getString("content").toString()
+}
+
+fun getQuoteDisplay(quoteString: String, guessedLetters: Set<Char>): String {
+    return quoteString.map {
+        when {
+            it == ' ' -> ' '
+            guessedLetters.contains(it) -> it
+            else -> '_'
+        }
+    }.joinToString(" ")
 }
