@@ -8,23 +8,19 @@ import org.json.JSONObject
 
 
 fun main() {
-    val mutableAlphaList = ("abcdefghijklmnopqrstuvwxyz").toMutableList()
     val guessedLetters = mutableSetOf<Char>() // Set to store guessed letters
     var attempts = 6 // Number of attempts allowed
 
     println("Welcome to Hangman!")
     println("Guess the famous quote by entering one letter at a time.")
-    println("You have $attempts attempts.\n")
+    println("Player may only have $attempts incorrect attempts.")
+    println("You have $attempts attempts left.\n")
 
-    println("Available letters: ${mutableAlphaList.joinToString()}")
-    val index = mutableAlphaList.binarySearch('z')
-    println("index: $index")
-    mutableAlphaList.removeAt(index)
-    println("Available letters minus 'z': ${mutableAlphaList}")
+    guessedLetters.add('a')
+    displayAvailableLetters(guessedLetters)
 
     val quoteString = getQuote(25)
     println(quoteString)
-    guessedLetters.add('a')
     println("\nQuote: ${getQuoteDisplay(quoteString, guessedLetters)}")
 }
 
@@ -47,4 +43,13 @@ fun getQuoteDisplay(quoteString: String, guessedLetters: Set<Char>): String {
             else -> '_'
         }
     }.joinToString(" ")
+}
+
+fun displayAvailableLetters(lettersGuessed: MutableSet<Char>) {
+    val mutableAlphaList = ("abcdefghijklmnopqrstuvwxyz").toMutableList()
+    for (letter in lettersGuessed) {
+        val index = mutableAlphaList.binarySearch(letter)
+        mutableAlphaList.removeAt(index)
+    }
+    println("Available letters': ${mutableAlphaList.joinToString(" ")}")
 }
