@@ -15,8 +15,10 @@ fun main() {
     println("Player may only have $attempts incorrect attempts.")
     println("You have $attempts attempts left.\n")
 
-    val quoteString = getQuote(25).lowercase().trim('.')
+    val quoteString = getQuote(25).lowercase()
     println("$quoteString")
+//    val specialChars = addSpecialCharsToGuessedArray(quoteString)
+//    guessedLetters += stringToMutableCharSet(specialChars)
 
     while (true) {
         getQuoteDisplay(quoteString, guessedLetters)
@@ -25,8 +27,29 @@ fun main() {
 
         print("Enter a letter: ")
         val input = readLine()?.trim()?.lowercase()
-        val letter = input!![0]
+
+        if (input == null || input.length != 1 || !input[0].isLetter()) {
+            println("Please enter a valid single letter.")
+            continue
+        }
+
+        val letter = input[0]
+        if (guessedLetters.contains(letter)) {
+            println("You've already guessed '$letter'.")
+            continue
+        }
         guessedLetters.add(letter)
+        if (!quoteString.contains(letter)) {
+            attempts--
+            println("Incorrect guess! You have $attempts attempts left")
+            if (attempts == 0) {
+                println("Game over! The quote was '$quoteString'.")
+                break
+            }
+        } else if (quoteString.all { guessedLetters.contains(it) }) {
+            println("Congratulations! You guessed the quote: '$quoteString'")
+            break
+        }
     }
 }
 
@@ -57,11 +80,37 @@ fun getQuote(maxLength: Int): String {
 fun getQuoteDisplay(quoteString: String, guessedLetters: Set<Char>): String {
     return quoteString.map {
         when {
+            // maintain spaces and special characters
             it == ' ' -> ' '
+            it == ',' -> ','
+            it == '\'' -> '\''
+            it == ':' -> ':'
+            it == '.' -> '.'
             guessedLetters.contains(it) -> it
             else -> '_'
         }
     }.joinToString(" ")
+}
+
+fun addSpecialCharsToGuessedArray(quoteString: String) : String {
+    return quoteString.map {
+        when {
+            it == ' ' -> ' '
+            it == ',' -> ','
+            it == '\'' -> '\''
+            it == ':' -> ':'
+            it == '.' -> '.'
+            else -> {}
+        }
+    }.joinToString(" ")
+}
+
+fun stringToMutableCharSet(input: String): MutableSet<Char> {
+    val charSet = mutableSetOf<Char>()
+    for (char in input) {
+        charSet.add(char)
+    }
+    return charSet
 }
 
 /*
