@@ -8,6 +8,7 @@ import org.json.JSONObject
 
 fun main() {
     val guessedLetters = mutableSetOf<Char>() // Set to store guessed letters
+    val guessedLettersWithSpecialChars = mutableSetOf<Char>() // Set to store guessed letters and special characters
     var attempts = 6 // Number of attempts allowed
 
     println("Welcome to Hangman!")
@@ -17,8 +18,8 @@ fun main() {
 
     val quoteString = getQuote(25).lowercase()
     println("$quoteString")
-//    val specialChars = addSpecialCharsToGuessedArray(quoteString)
-//    guessedLetters += stringToMutableCharSet(specialChars)
+    val specialChars = addSpecialCharsToGuessedArray(quoteString)
+    guessedLettersWithSpecialChars += stringToMutableCharSet(specialChars)
 
     while (true) {
         getQuoteDisplay(quoteString, guessedLetters)
@@ -38,7 +39,11 @@ fun main() {
             println("You've already guessed '$letter'.")
             continue
         }
+
+        // need on array to hold letters user enters, and one that also includes the special characters
         guessedLetters.add(letter)
+        guessedLettersWithSpecialChars.add(letter)
+
         if (!quoteString.contains(letter)) {
             attempts--
             println("Incorrect guess! You have $attempts attempts left")
@@ -46,7 +51,7 @@ fun main() {
                 println("Game over! The quote was '$quoteString'.")
                 break
             }
-        } else if (quoteString.all { guessedLetters.contains(it) }) {
+        } else if (quoteString.all { guessedLettersWithSpecialChars.contains(it) }) {
             println("Congratulations! You guessed the quote: '$quoteString'")
             break
         }
