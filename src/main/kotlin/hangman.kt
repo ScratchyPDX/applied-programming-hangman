@@ -7,10 +7,8 @@ import java.net.http.HttpResponse
 import org.json.JSONObject
 
 fun main() {
-    val guessedLetters = mutableSetOf<Char>() // Set to store guessed letters
-    val guessedLettersWithSpecialChars = mutableSetOf<Char>() // Set to store guessed letters and special characters
 
-    println("Welcome to Hangman!")
+    println("\nWelcome to Hangman!")
     println("Guess the famous quote by entering one letter at a time\n")
 
     while(true) {
@@ -35,46 +33,8 @@ fun main() {
         println("\nPlayer may only have $attempts incorrect attempts.")
         println("You have $attempts attempts left.\n")
 
-        val quoteString = getQuote(maxLength).lowercase()
-        println("$quoteString")
-        val specialChars = addSpecialCharsToGuessedArray(quoteString)
-        guessedLettersWithSpecialChars += stringToMutableCharSet(specialChars)
+        playGame(maxLength, attempts)
 
-        while (true) {
-            getQuoteDisplay(quoteString, guessedLetters)
-            println("\nQuote: ${getQuoteDisplay(quoteString, guessedLetters)}")
-            displayAvailableLetters(guessedLetters)
-
-            print("Enter a letter: ")
-            val input = readLine()?.trim()?.lowercase()
-
-            if (input == null || input.length != 1 || !input[0].isLetter()) {
-                println("Please enter a valid single letter.")
-                continue
-            }
-
-            val letter = input[0]
-            if (guessedLetters.contains(letter)) {
-                println("You've already guessed '$letter'.")
-                continue
-            }
-
-            // need on array to hold letters user enters, and one that also includes the special characters
-            guessedLetters.add(letter)
-            guessedLettersWithSpecialChars.add(letter)
-
-            if (!quoteString.contains(letter)) {
-                attempts--
-                println("Incorrect guess! You have $attempts attempts left")
-                if (attempts == 0) {
-                    println("Game over! The quote was '$quoteString'.")
-                    break
-                }
-            } else if (quoteString.all { guessedLettersWithSpecialChars.contains(it) }) {
-                println("\nCongratulations! You guessed the quote: '$quoteString'\n")
-                break
-            }
-        }
         print("Would you like to play again? (Y/N): ")
         val playAgain = readLine()?.trim()?.lowercase()
         if (playAgain != "y") {
@@ -83,9 +43,54 @@ fun main() {
         }
         println()
         println()
-        guessedLetters.clear()
-        guessedLettersWithSpecialChars.clear()
+    }
+}
 
+// main game loop code
+fun playGame(maxLength: Int, attempts: Int) {
+    var localAttempts = attempts
+    val guessedLetters = mutableSetOf<Char>() // Set to store guessed letters
+    val guessedLettersWithSpecialChars = mutableSetOf<Char>() // Set to store guessed letters and special characters
+
+    val quoteString = getQuote(maxLength).lowercase()
+    println("$quoteString")
+    val specialChars = addSpecialCharsToGuessedArray(quoteString)
+    guessedLettersWithSpecialChars += stringToMutableCharSet(specialChars)
+
+    while (true) {
+        getQuoteDisplay(quoteString, guessedLetters)
+        println("\nQuote: ${getQuoteDisplay(quoteString, guessedLetters)}")
+        displayAvailableLetters(guessedLetters)
+
+        print("Enter a letter: ")
+        val input = readLine()?.trim()?.lowercase()
+
+        if (input == null || input.length != 1 || !input[0].isLetter()) {
+            println("Please enter a valid single letter.")
+            continue
+        }
+
+        val letter = input[0]
+        if (guessedLetters.contains(letter)) {
+            println("You've already guessed '$letter'.")
+            continue
+        }
+
+        // need on array to hold letters user enters, and one that also includes the special characters
+        guessedLetters.add(letter)
+        guessedLettersWithSpecialChars.add(letter)
+
+        if (!quoteString.contains(letter)) {
+            localAttempts--
+            println("Incorrect guess! You have $localAttempts attempts left")
+            if (localAttempts == 0) {
+                println("\nGame over! The quote was '$quoteString'\n")
+                break
+            }
+        } else if (quoteString.all { guessedLettersWithSpecialChars.contains(it) }) {
+            println("\nCongratulations! You guessed the quote: '$quoteString'\n")
+            break
+        }
     }
 }
 
@@ -163,3 +168,4 @@ fun displayAvailableLetters(guessedLetters: MutableSet<Char>) {
     }
     println("Available letters': ${mutableAlphaList.joinToString(" ")}")
 }
+
