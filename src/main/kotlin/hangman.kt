@@ -53,7 +53,7 @@ fun playGame(maxLength: Int, attempts: Int) {
     val guessedLettersWithSpecialChars = mutableSetOf<Char>() // Set to store guessed letters and special characters
 
     val quoteString = getQuote(maxLength).lowercase()
-    println("$quoteString")
+//    println("$quoteString")  // uncomment to see the quote while debugging
     val specialChars = addSpecialCharsToGuessedArray(quoteString)
     guessedLettersWithSpecialChars += stringToMutableCharSet(specialChars)
 
